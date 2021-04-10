@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LabelsView">
+        <attr name="selectedBackgroundColor" format="reference|color" />
+        <attr name="unSelectedBackgroundColor" format="reference|color" />
+        <attr name="selectedTextColor" format="reference|color" />
+        <attr name="unSelectedTextColor" format="reference|color" />
+        <attr name="LineMargin" format="dimension" />
+        <attr name="WordMargin" format="dimension" />
+    </declare-styleable>
+</resources>
