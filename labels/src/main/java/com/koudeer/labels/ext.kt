@@ -8,4 +8,4 @@ val Int.dp2px
         TypedValue.COMPLEX_UNIT_DIP,
         this.toFloat(),
         Resources.getSystem().displayMetrics
-    )
+    ).toInt()

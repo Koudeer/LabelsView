@@ -7,7 +7,10 @@
     tools:context=".MainActivity">
 
     <com.koudeer.labels.LabelsView
-        android:layout_width="wrap_content"
+        android:padding="5dp"
+        android:id="@+id/mlabelsview"
+        android:layout_width="match_parent"
+        android:background="#CCC"
         android:layout_height="wrap_content"/>
 
 </RelativeLayout>
