@@ -1,0 +1,3 @@
+include ':labels'
+include ':app'
+rootProject.name = "LabelsView"
