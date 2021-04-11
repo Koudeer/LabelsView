@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.setPadding
 
 class LabelsView : ViewGroup, View.OnClickListener {
 
@@ -17,24 +19,30 @@ class LabelsView : ViewGroup, View.OnClickListener {
     private var unSelectedBackgroundColor: Int = 0;//未选中背景颜色
     private var selectedTextColor: Int = 0;//文本选中颜色
     private var unSelectedTextColor: Int = 0;//文本未选中颜色
+    private var textPaddingLeft = 0;
+    private var textPaddingRight = 0;
+    private var textPaddingTop = 0;
+    private var textPaddingBottom = 0;
+    private var textPadding = 0;
+    private var labelTextSize = 0f;
 
-    private val defaultSelectedBgColor = 0x2196F3 //默认选中背景颜色
-    private val defaultUnSelectedBgColor = 0xfff //默认未选中背景颜色
-    private val defaultSelectTextColor = 0x000 //未选中文本颜色
+    private val defaultSelectedBgColor = Color.parseColor("#2196F3") //默认选中背景颜色
+    private val defaultUnSelectedBgColor = Color.WHITE //默认未选中背景颜色
+    private val defaultSelectTextColor = Color.BLACK //未选中文本颜色
     private val defaultSelectedTextColor = 0xfff //选中文本颜色
 
-    private var mContext: Context? = null
+    private var mContext: Context
 
-    constructor(context: Context?) : super(context) {
+    constructor(context: Context) : super(context) {
         this.mContext = context
     }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         getAttrs(context, attrs)
         this.mContext = context
     }
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -61,6 +69,20 @@ class LabelsView : ViewGroup, View.OnClickListener {
                 getColor(R.styleable.LabelsView_unSelectedTextColor, defaultSelectedTextColor)
             mWordMargin = getDimensionPixelOffset(R.styleable.LabelsView_WordMargin, 5.dp2px)
             mLineMargin = getDimensionPixelOffset(R.styleable.LabelsView_LineMargin, 5.dp2px)
+
+            textPaddingLeft =
+                getDimensionPixelOffset(R.styleable.LabelsView_textPaddingLeft, 10.dp2px);
+            textPaddingRight =
+                getDimensionPixelOffset(R.styleable.LabelsView_textPaddingRight, 10.dp2px);
+            textPaddingTop =
+                getDimensionPixelOffset(R.styleable.LabelsView_textPaddingTop, 5.dp2px);
+            textPaddingBottom =
+                getDimensionPixelOffset(R.styleable.LabelsView_textPaddingBottom, 5.dp2px);
+
+            textPadding = getDimensionPixelOffset(R.styleable.LabelsView_textPadding, 0)
+
+            labelTextSize = getDimension(R.styleable.LabelsView_labelTextSize, 12.sp2px)
+
             recycle()
         }
     }
@@ -159,16 +181,30 @@ class LabelsView : ViewGroup, View.OnClickListener {
      * 添加控件
      */
     private fun addLabel(data: String) {
-        val view = TextView(mContext)
+        val view = LabelTextView(mContext)
         view.text = data
-        view.setTextColor(Color.BLACK)
-        view.setBackgroundColor(Color.WHITE)
-        view.setPadding(8.dp2px, 5.dp2px, 8.dp2px, 5.dp2px)
+        view.setTextColor(selectedTextColor)
+        view.setBackgroundColor(unSelectedBackgroundColor)
         view.setOnClickListener(this)
+        view.setTextSize(TypedValue.COMPLEX_UNIT_PX, labelTextSize)
+        if (textPadding != 0) {
+            view.setPadding(textPadding)
+        } else {
+            view.setPadding(textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom)
+        }
+
         addView(view)
     }
 
     override fun onClick(v: View) {
-
+        val view = v as LabelTextView
+        if (view.isClick) {
+            //选中状态变为未选中状态
+            view.setBackgroundColor(unSelectedBackgroundColor)
+        } else {
+            //未选中状态变为选中状态
+            view.setBackgroundColor(selectedBackgroundColor)
+        }
+        view.isClick = !view.isClick
     }
 }

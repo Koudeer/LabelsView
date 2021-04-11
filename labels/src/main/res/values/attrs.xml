@@ -11,5 +11,7 @@
         <attr name="textPaddingRight" format="dimension" />
         <attr name="textPaddingTop" format="dimension" />
         <attr name="textPaddingBottom" format="dimension" />
+        <attr name="textPadding" format="dimension"/>
+        <attr name="labelTextSize" format="dimension"/>
     </declare-styleable>
 </resources>
