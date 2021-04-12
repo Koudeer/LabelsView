@@ -3,16 +3,17 @@ package com.koudeer.labels
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.setPadding
 
-class LabelsView : ViewGroup, View.OnClickListener {
+class LabelsView<T> : ViewGroup, View.OnClickListener {
+    private val TAG = "LabelsView"
 
-    //SparseIntArray
     private var mWordMargin: Int = 0;//文本控件间隔
     private var mLineMargin: Int = 0;//行距
     private var selectedBackgroundColor: Int = 0;//选中背景颜色
@@ -29,7 +30,9 @@ class LabelsView : ViewGroup, View.OnClickListener {
     private val defaultSelectedBgColor = Color.parseColor("#2196F3") //默认选中背景颜色
     private val defaultUnSelectedBgColor = Color.WHITE //默认未选中背景颜色
     private val defaultSelectTextColor = Color.BLACK //未选中文本颜色
-    private val defaultSelectedTextColor = 0xfff //选中文本颜色
+    private val defaultSelectedTextColor = Color.BLACK //选中文本颜色
+
+    public val dataList = mutableListOf<T>()
 
     private var mContext: Context
 
@@ -105,7 +108,8 @@ class LabelsView : ViewGroup, View.OnClickListener {
             //子view自我测量
             measureChild(view, widthMeasureSpec, heightMeasureSpec)
             //预判加起来的宽度是否比maxWidth大,true则换行
-            if ((lineWidth + view.measuredWidth + mWordMargin) > maxWidth) {
+            //因为lineWidth是mWordMargin + view.measuredWidth 所以预判的时候不需要加上mWordMargin
+            if ((lineWidth + view.measuredWidth) > maxWidth) {
                 ++lineCount
                 contentHeight += mLineMargin + maxHeight
                 maxLineWidth = maxLineWidth.coerceAtLeast(lineWidth)
@@ -171,7 +175,7 @@ class LabelsView : ViewGroup, View.OnClickListener {
     /**
      * 添加控件需要的数据
      */
-    fun setLabels(list: MutableList<String>) {
+    fun setLabels(list: MutableList<LabelData<T>>) {
         list.forEach { it ->
             addLabel(it)
         }
@@ -180,10 +184,11 @@ class LabelsView : ViewGroup, View.OnClickListener {
     /**
      * 添加控件
      */
-    private fun addLabel(data: String) {
-        val view = LabelTextView(mContext)
-        view.text = data
-        view.setTextColor(selectedTextColor)
+    private fun addLabel(data: LabelData<T>) {
+        val view = LabelTextView<T>(mContext)
+        view.text = data.title
+        view.data = data.data
+        view.setTextColor(unSelectedTextColor)
         view.setBackgroundColor(unSelectedBackgroundColor)
         view.setOnClickListener(this)
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, labelTextSize)
@@ -197,14 +202,30 @@ class LabelsView : ViewGroup, View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        val view = v as LabelTextView
-        if (view.isClick) {
+        if (v !is LabelTextView<*>) return
+
+        if (v.isClick) {
             //选中状态变为未选中状态
-            view.setBackgroundColor(unSelectedBackgroundColor)
+            v.setBackgroundColor(unSelectedBackgroundColor)
+            v.setTextColor(unSelectedTextColor)
+            dataList.remove(v.data as T)
         } else {
             //未选中状态变为选中状态
-            view.setBackgroundColor(selectedBackgroundColor)
+            v.setBackgroundColor(selectedBackgroundColor)
+            v.setTextColor(selectedTextColor)
+            dataList.add(v.data as T)
         }
-        view.isClick = !view.isClick
+        v.isClick = !v.isClick
+        listener?.onChange(dataList)
+    }
+
+    private var listener: onLabelChangeListener<T>? = null
+
+    public interface onLabelChangeListener<T> {
+        fun onChange(list: List<T>)
+    }
+
+    public fun setLabelChangeListener(listener: onLabelChangeListener<T>): Unit {
+        this.listener = listener
     }
 }
