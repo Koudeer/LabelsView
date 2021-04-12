@@ -3,9 +3,7 @@ package com.koudeer.labels
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
-import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -14,24 +12,25 @@ import androidx.core.view.setPadding
 class LabelsView<T> : ViewGroup, View.OnClickListener {
     private val TAG = "LabelsView"
 
-    private var mWordMargin: Int = 0;//文本控件间隔
-    private var mLineMargin: Int = 0;//行距
-    private var selectedBackgroundColor: Int = 0;//选中背景颜色
-    private var unSelectedBackgroundColor: Int = 0;//未选中背景颜色
-    private var selectedTextColor: Int = 0;//文本选中颜色
-    private var unSelectedTextColor: Int = 0;//文本未选中颜色
-    private var textPaddingLeft = 0;
-    private var textPaddingRight = 0;
-    private var textPaddingTop = 0;
-    private var textPaddingBottom = 0;
-    private var textPadding = 0;
-    private var labelTextSize = 0f;
+    private var mWordMargin: Int = 0//文本控件间隔
+    private var mLineMargin: Int = 0//行距
+    private var selectedBackgroundColor: Int = 0//选中背景颜色
+    private var unSelectedBackgroundColor: Int = 0//未选中背景颜色
+    private var selectedTextColor: Int = 0//文本选中颜色
+    private var unSelectedTextColor: Int = 0//文本未选中颜色
+    private var textPaddingLeft = 0
+    private var textPaddingRight = 0
+    private var textPaddingTop = 0
+    private var textPaddingBottom = 0
+    private var textPadding = 0
+    private var labelTextSize = 0f
 
     private val defaultSelectedBgColor = Color.parseColor("#2196F3") //默认选中背景颜色
     private val defaultUnSelectedBgColor = Color.WHITE //默认未选中背景颜色
     private val defaultSelectTextColor = Color.BLACK //未选中文本颜色
     private val defaultSelectedTextColor = Color.BLACK //选中文本颜色
 
+    public var lines = 0
     public val dataList = mutableListOf<T>()
 
     private var mContext: Context
@@ -88,6 +87,8 @@ class LabelsView<T> : ViewGroup, View.OnClickListener {
 
             recycle()
         }
+        //默认5dp Padding
+        this.setPadding(5.dp2px)
     }
 
     /**
@@ -127,6 +128,11 @@ class LabelsView<T> : ViewGroup, View.OnClickListener {
         val width = measureSize(widthMeasureSpec, maxLineWidth)
         val height = measureSize(heightMeasureSpec, contentHeight + paddingTop + paddingBottom)
         setMeasuredDimension(width, height)
+
+        //如果只有一个子view都等于一行
+        if (count > 0) {
+            lines = lineCount + 1
+        }
     }
 
     /**
@@ -219,13 +225,13 @@ class LabelsView<T> : ViewGroup, View.OnClickListener {
         listener?.onChange(dataList)
     }
 
-    private var listener: onLabelChangeListener<T>? = null
+    private var listener: OnLabelChangeListener<T>? = null
 
-    public interface onLabelChangeListener<T> {
+    public interface OnLabelChangeListener<T> {
         fun onChange(list: List<T>)
     }
 
-    public fun setLabelChangeListener(listener: onLabelChangeListener<T>): Unit {
+    public fun setLabelChangeListener(listener: OnLabelChangeListener<T>) {
         this.listener = listener
     }
 }

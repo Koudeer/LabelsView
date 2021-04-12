@@ -3,8 +3,6 @@ package com.koudeer.labelsview
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.util.SparseIntArray
-import android.util.SparseLongArray
 import com.koudeer.labels.LabelData
 import com.koudeer.labels.LabelsView
 
@@ -28,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         mutableList.add(LabelData("Java", "7"))
         labelsView.setLabels(mutableList)
 
-        labelsView.setLabelChangeListener(object : LabelsView.onLabelChangeListener<String> {
+        labelsView.setLabelChangeListener(object : LabelsView.OnLabelChangeListener<String> {
             override fun onChange(list: List<String>) {
                 Log.d(TAG, "onChange: $list")
             }
