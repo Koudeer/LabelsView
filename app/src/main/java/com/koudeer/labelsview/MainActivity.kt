@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         mutableList.add(LabelData("Java", "5"))
         mutableList.add(LabelData("Java", "6"))
         mutableList.add(LabelData("Java", "7"))
+        mutableList.add(LabelData("Java", "8"))
         labelsView.setLabels(mutableList)
 
         labelsView.setLabelChangeListener(object : LabelsView.OnLabelChangeListener<String> {
